@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            background-color: #f8f8f8;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 200px;
+        }
+        .message {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #333333;
+        }
+        p {
+            font-size: 14px;
+            color: #555555;
+        }
+        .otp {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #999999;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <p class="message">Hello, <strong th:text="${user_name}"></strong></p>
+    <h3>Verification Required</h3>
+    <p>Welcome to <span th:text="${company_name}"></span>!</p>
+    <p>Thank you for registering with us. Please enter the OTP below to complete your registration:</p>
+    <h1 class="otp" th:text="${otp}"></h1>
+    <p>Thank you,</p>
+    <p th:text="${company_name}"></p>
+</div>
+<div class="footer">
+    This is an automated email, please do not reply.
+</div>
+</body>
+</html>
