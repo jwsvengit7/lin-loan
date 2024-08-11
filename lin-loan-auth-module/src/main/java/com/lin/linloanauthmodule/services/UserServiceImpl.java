@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.lin.commons.helpers.Helpers.linLoanresponseEntity;
 import static com.lin.commons.utils.MessageUtils.OTP_TOPIC;
 import static com.lin.commons.utils.MessageUtils.PROFILE_TOPIC;
 
@@ -66,10 +67,10 @@ public class UserServiceImpl implements UserService {
         try {
             User user = userRepository.findByEmail(request.getEmail()).orElse(null);
             if (Objects.isNull(user)) {
-                return new ResponseEntity<>(new LinLoanResponse<>(null, "User is null"), HttpStatus.BAD_REQUEST);
+                return linLoanresponseEntity(null, "User is null", HttpStatus.BAD_REQUEST);
             }
             if (!user.getStatus().equals(UserStatus.CONFIRMED)) {
-                return new ResponseEntity<>(new LinLoanResponse<>(null, "User Not confirmed"), HttpStatus.CONFLICT);
+                return linLoanresponseEntity(null, "User Not confirmed", HttpStatus.CONFLICT);
             }
             if (encoder.matches(request.getPassword(), user.getPassword())) {
                 LOGGER.info("<<<<<<<<  Password Match login() >>>>>>>{}", UserServiceImpl.class);
@@ -86,11 +87,11 @@ public class UserServiceImpl implements UserService {
                 response.setJwt(token);
                 response.setPhone(data.getPhone());
                 response.setRefreshToken(refreshToken);
-                return new ResponseEntity<>(new LinLoanResponse<>(response), HttpStatus.OK);
+                return linLoanresponseEntity(response,"", HttpStatus.OK);
             }
-            return new ResponseEntity<>(new LinLoanResponse<>(null, "Password does not matcch"), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity(null, "Password does not match", HttpStatus.BAD_REQUEST);
         }catch (Exception e){
-            return new ResponseEntity<>(new LinLoanResponse<>(null, e.getMessage()), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity(null, e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
     @Override
@@ -99,24 +100,24 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.findByEmail(request.getEmail()).orElse(null);
             if (Objects.nonNull(user)) {
                 if (user.getStatus().equals(UserStatus.CONFIRMED)){
-                    return new ResponseEntity<>(new LinLoanResponse<>(null, "User Already Confirmed"), HttpStatus.BAD_REQUEST);
+                    return linLoanresponseEntity(null, "User Already Confirmed", HttpStatus.BAD_REQUEST);
                 }
                 UserOTP userOTP = userOTPRepository.findByOtpAndUser(request.getOtp(),user);
                 if (Objects.isNull(userOTP)){
-                    return new ResponseEntity<>(new LinLoanResponse<>("OTP does not found", ""), HttpStatus.BAD_REQUEST);
+                    return linLoanresponseEntity("OTP does not found", "", HttpStatus.BAD_REQUEST);
 
                 }
                 if (!otpService.isOTPValid(userOTP)) {
                     user.setStatus(UserStatus.CONFIRMED);
                     userRepository.save(user);
                     messagePublisherProfile(mapper.readValue(user.getProfileDtoData(), ProfileDtoData.class));
-                    return new ResponseEntity<>(new LinLoanResponse<>("User have been confirmed", ""), HttpStatus.OK);
+                    return linLoanresponseEntity("User have been confirmed", "", HttpStatus.OK);
                 }
-                return new ResponseEntity<>(new LinLoanResponse<>("OTP have Expired", ""), HttpStatus.BAD_REQUEST);
+                    return linLoanresponseEntity("OTP have Expired","", HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(new LinLoanResponse<>("User does not Exist", ""), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity("User does not Exist","", HttpStatus.BAD_REQUEST);
         }catch (Exception e){
-            return new ResponseEntity<>(new LinLoanResponse<>(null, e.getMessage()), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity(null, e.getMessage(), HttpStatus.BAD_REQUEST);
 
         }
 
@@ -128,20 +129,20 @@ public class UserServiceImpl implements UserService {
             if (Objects.nonNull(user)) {
                 LOGGER.info("<<<<<<<<  >>>>>>>{}", user.toString());
                 if (user.getStatus().equals(UserStatus.CONFIRMED)){
-                    return new ResponseEntity<>(new LinLoanResponse<>(null, "User Already Confirmed"), HttpStatus.BAD_REQUEST);
+                    return linLoanresponseEntity(null, "User Already Confirmed", HttpStatus.BAD_REQUEST);
                 }
                     UserOTP otp =  userOTPRepository.findUserOTPByUser(user);
                     var userOTP = generateOTP(user,otp);
+
                 /*        * Kafka Publisher Method
                  */
-
                     messagePublisher(userOTP);
-                    return new ResponseEntity<>(new LinLoanResponse<>("OTP have been sent to "+request, "Success"), HttpStatus.OK);
+                    return linLoanresponseEntity("OTP have been sent to "+request, "Success", HttpStatus.OK);
                 }
 
-            return new ResponseEntity<>(new LinLoanResponse<>("User does not Exist", ""), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity("User does not Exist", "", HttpStatus.BAD_REQUEST);
         }catch (Exception e){
-            return new ResponseEntity<>(new LinLoanResponse<>(null, e.getMessage()), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity(null, e.getMessage(), HttpStatus.BAD_REQUEST);
 
         }
 
@@ -152,12 +153,12 @@ public class UserServiceImpl implements UserService {
         try {
             User user = userRepository.findByEmail(request.getEmail()).orElse(null);
             if (Objects.nonNull(user)) {
-                LOGGER.info("<<<<<<<<  User Already Exist >>>>>>>{}", UserServiceImpl.class);
-                return new ResponseEntity<>(new LinLoanResponse<>(null, "User Already Exist"), HttpStatus.CONFLICT);
+                LOGGER.info("<<<<<<<<  User Already Exist >>>>>>>{}", UserServiceImpl.class.getName());
+                return linLoanresponseEntity(null, "User Already Exist", HttpStatus.CONFLICT);
             }
           if (userRepository.existsByPhone(request.getPhone())) {
-                LOGGER.info("<<<<<<<<  Phone Number Exist >>>>>>>{}", UserServiceImpl.class);
-                return new ResponseEntity<>(new LinLoanResponse<>(null, " Phone Number Exist"), HttpStatus.CONFLICT);
+                LOGGER.info("<<<<<<<<  Phone Number Exist >>>>>>>{}", UserServiceImpl.class.getName());
+                return linLoanresponseEntity(null, " Phone Number Exist", HttpStatus.CONFLICT);
             }
             /*        * New User Indicated
              */
@@ -177,9 +178,9 @@ public class UserServiceImpl implements UserService {
             /*        * Kafka Publisher Method
              */
             messagePublisher(userOTP);
-            return new ResponseEntity<>(new LinLoanResponse<>(new SignupResponse("User Register Completed", request.getEmail())), HttpStatus.OK);
+            return linLoanresponseEntity(new SignupResponse("User Register Completed", request.getEmail()),"", HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<>(new LinLoanResponse<>(null, e.getMessage()), HttpStatus.BAD_REQUEST);
+            return linLoanresponseEntity(null, e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
