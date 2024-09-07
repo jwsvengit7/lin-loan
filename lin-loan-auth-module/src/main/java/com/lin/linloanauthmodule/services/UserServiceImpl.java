@@ -1,12 +1,10 @@
 package com.lin.linloanauthmodule.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lin.commons.helpers.JwtServiceInfo;
 import com.lin.commons.model.enums.UserStatus;
 import com.lin.commons.model.enums.UserType;
-import com.lin.commons.model.request.LoginRequest;
-import com.lin.commons.model.request.ProfileDtoData;
-import com.lin.commons.model.request.SignUpRequest;
-import com.lin.commons.model.request.VerifyOtpRequest;
+import com.lin.commons.model.request.*;
 import com.lin.commons.model.response.LinLoanResponse;
 import com.lin.commons.model.response.LoginResponse;
 import com.lin.commons.model.response.SignupResponse;
@@ -15,11 +13,9 @@ import com.lin.linloanauthmodule.domain.entity.User;
 import com.lin.linloanauthmodule.domain.entity.UserOTP;
 import com.lin.linloanauthmodule.domain.repository.UserOTPRepository;
 import com.lin.linloanauthmodule.domain.repository.UserRepository;
-import com.lin.linloanauthmodule.messaging.KafkaService;
-import com.lin.linloanauthmodule.security.JwtServiceInfo;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,37 +25,30 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Objects;
 
 import static com.lin.commons.helpers.Helpers.linLoanresponseEntity;
-import static com.lin.commons.utils.MessageUtils.OTP_TOPIC;
-import static com.lin.commons.utils.MessageUtils.PROFILE_TOPIC;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserOTPRepository userOTPRepository;
-    @Autowired
-    private OTPService otpService;
+    private final UserOTPRepository userOTPRepository;
 
-    @Autowired
-    private PasswordEncoder encoder;
+    private final OTPService otpService;
 
-    @Autowired
-    private KafkaService messagePublisher;
+    private final PasswordEncoder encoder;
 
-    @Autowired
-    private JwtServiceInfo serviceInfo;
-    @Autowired
-    private ObjectMapper mapper;
+    private final MessagingService message;
+
+    private final JwtServiceInfo serviceInfo;
+
+    private final ObjectMapper mapper;
 
     @Override
     public ResponseEntity<LinLoanResponse<LoginResponse>> login(LoginRequest request) {
@@ -110,7 +99,7 @@ public class UserServiceImpl implements UserService {
                 if (!otpService.isOTPValid(userOTP)) {
                     user.setStatus(UserStatus.CONFIRMED);
                     userRepository.save(user);
-                    messagePublisherProfile(mapper.readValue(user.getProfileDtoData(), ProfileDtoData.class));
+                    message.messagePublisherProfile(mapper.readValue(user.getProfileDtoData(), ProfileDtoData.class));
                     return linLoanresponseEntity("User have been confirmed", "", HttpStatus.OK);
                 }
                     return linLoanresponseEntity("OTP have Expired","", HttpStatus.BAD_REQUEST);
@@ -123,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     }
     @Override
-    public ResponseEntity<LinLoanResponse<String>> resendOTP(String request){
+    public ResponseEntity<LinLoanResponse<String>> resendOTP(final String request){
         try {
             User user = userRepository.findByEmail(request).orElse(null);
             if (Objects.nonNull(user)) {
@@ -132,11 +121,13 @@ public class UserServiceImpl implements UserService {
                     return linLoanresponseEntity(null, "User Already Confirmed", HttpStatus.BAD_REQUEST);
                 }
                     UserOTP otp =  userOTPRepository.findUserOTPByUser(user);
-                    var userOTP = generateOTP(user,otp);
+                    var userOTP = otpService.generateOTP(user,otp);
+                    var otpData = new OtpData(userOTP.getOtp(),user.getEmail(),user.getId());
 
                 /*        * Kafka Publisher Method
                  */
-                    messagePublisher(userOTP);
+                message.messagePublisher(otpData);
+
                     return linLoanresponseEntity("OTP have been sent to "+request, "Success", HttpStatus.OK);
                 }
 
@@ -174,10 +165,11 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("<<<<<<<<  Saving TO DB >>>>>>>{}", UserServiceImpl.class);
             var save = userRepository.save(newUser);
             UserOTP otp = new UserOTP();
-            var userOTP = generateOTP(save,otp);
+            var userOTP = otpService.generateOTP(save,otp);
+            var otpData = new OtpData(userOTP.getOtp(),save.getEmail(),save.getId());
             /*        * Kafka Publisher Method
              */
-            messagePublisher(userOTP);
+            message.messagePublisher(otpData);
             return linLoanresponseEntity(new SignupResponse("User Register Completed", request.getEmail()),"", HttpStatus.OK);
         }catch (Exception e){
             return linLoanresponseEntity(null, e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -193,24 +185,5 @@ public class UserServiceImpl implements UserService {
         return profileDtoData;
     }
 
-    private void messagePublisher(UserOTP userOTP){
-        HashMap<Object,Object> data = new HashMap<>();
-        data.put("OTP", userOTP.getOtp());
-        data.put("email", userOTP.getUser().getEmail());
-        data.put("id",userOTP.getUser().getId());
-        LOGGER.info("<<<<<<<<  Sending OTP Message from >>>>>>>{}", UserServiceImpl.class.getName());
-        messagePublisher.sendOTPMessage(data,OTP_TOPIC);
-    }
-    private void messagePublisherProfile(ProfileDtoData profileData){
-        LOGGER.info("<<<<<<<<  Sending PROFILE Message from >>>>>>>{}", UserServiceImpl.class.getName());
-        messagePublisher.sendOTPMessage(profileData,PROFILE_TOPIC);
-    }
-    private UserOTP generateOTP(User user,UserOTP otp){
-        otp.setUser(user);
-        otp.setExpire(LocalDateTime.now().plusMinutes(5));
-        otp.setDateTime(LocalDateTime.now());
-        otp.setOtp(Utils.generateOtp());
-        return userOTPRepository.save(otp);
 
-    }
 }
