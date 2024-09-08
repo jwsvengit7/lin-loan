@@ -1,6 +1,6 @@
 package com.lin.linloanauthmodule.security;
 
-import com.lin.commons.helpers.JwtServiceInfo;
+import com.lin.commonsshared.jwt.JwtServiceInfo;
 import com.lin.linloanauthmodule.config.AppUserConfigService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,14 +12,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-@Service
+@Component
 public class JWTMiddleware  extends OncePerRequestFilter {
     private final JwtServiceInfo jwtService;
     private final AppUserConfigService userService;
@@ -41,7 +41,7 @@ public class JWTMiddleware  extends OncePerRequestFilter {
         if(Objects.nonNull(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())){
             UserDetails userDetails =  userService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(accessToken, userDetails)){
+            if (jwtService.isTokenValid(accessToken, userDetails.getUsername())){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

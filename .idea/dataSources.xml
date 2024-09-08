@@ -13,15 +13,14 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@cluster.1pjyboz.mongodb.net" uuid="2efd9a46-3cb5-4a2c-85e9-39eef8c1e1fb">
+    <data-source source="LOCAL" name="lin-profile@cluster.1pjyboz.mongodb.net" uuid="bc508f0b-89c4-44d3-9631-bb66c1c14f3e">
       <driver-ref>mongo</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
-      <jdbc-url>mongodb+srv://cluster.1pjyboz.mongodb.net/</jdbc-url>
+      <jdbc-url>mongodb+srv://cluster.1pjyboz.mongodb.net/lin-profile</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
-        <property name="EXTERNAL_DATA_PATH" value="$PROJECT_DIR$/external-data-cluster_1pjyboz_mongodb_net.xml" />
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>

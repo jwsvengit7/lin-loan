@@ -8,11 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lin-loan-profile-module" />
+        <module name="commons-shared" />
         <module name="api-gateway" />
         <module name="lin-loan-auth-module" />
         <module name="lin-loan-notification-module" />
+        <module name="loan-service-module" />
         <module name="Lin-Loan-discovery" />
         <module name="commons" />
+        <module name="Lin-Transaction-module" />
         <module name="lin-loan-config-module" />
       </profile>
     </annotationProcessing>
@@ -20,12 +23,15 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Lin-Loan-discovery" options="-parameters" />
+      <module name="Lin-Transaction-module" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="commons" options="-parameters" />
+      <module name="commons-shared" options="-parameters" />
       <module name="lin-loan-auth-module" options="-parameters" />
       <module name="lin-loan-config-module" options="-parameters" />
       <module name="lin-loan-notification-module" options="-parameters" />
       <module name="lin-loan-profile-module" options="-parameters" />
+      <module name="loan-service-module" options="-parameters" />
     </option>
   </component>
 </project>

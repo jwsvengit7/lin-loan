@@ -1,6 +1,6 @@
 package com.lin.commons.helpers;
 
-import com.lin.commons.model.response.LinLoanResponse;
+import com.lin.commonsshared.model.response.LinLoanResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

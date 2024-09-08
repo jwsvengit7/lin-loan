@@ -1,14 +1,13 @@
 package com.lin.linloanauthmodule.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lin.commons.helpers.JwtServiceInfo;
-import com.lin.commons.model.enums.UserStatus;
-import com.lin.commons.model.enums.UserType;
-import com.lin.commons.model.request.*;
-import com.lin.commons.model.response.LinLoanResponse;
-import com.lin.commons.model.response.LoginResponse;
-import com.lin.commons.model.response.SignupResponse;
-import com.lin.commons.utils.Utils;
+import com.lin.commonsshared.jwt.JwtServiceInfo;
+import com.lin.commonsshared.model.enums.UserStatus;
+import com.lin.commonsshared.model.enums.UserType;
+import com.lin.commonsshared.model.request.*;
+import com.lin.commonsshared.model.response.LinLoanResponse;
+import com.lin.commonsshared.model.response.LoginResponse;
+import com.lin.commonsshared.model.response.SignupResponse;
 import com.lin.linloanauthmodule.domain.entity.User;
 import com.lin.linloanauthmodule.domain.entity.UserOTP;
 import com.lin.linloanauthmodule.domain.repository.UserOTPRepository;
@@ -22,6 +21,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -64,9 +65,9 @@ public class UserServiceImpl implements UserService {
             if (encoder.matches(request.getPassword(), user.getPassword())) {
                 LOGGER.info("<<<<<<<<  Password Match login() >>>>>>>{}", UserServiceImpl.class);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
-                String token = serviceInfo.generateToken(authentication,user.getRole());
+                String token = serviceInfo.generateToken(authentication.getName(),user.getRole());
                 LOGGER.info("<<<<<<<<  JWT TOKEN {} >>>>>>>  {} ",token, UserServiceImpl.class);
-                String refreshToken = serviceInfo.generateRefreshToken(authentication,user.getRole());
+                String refreshToken = serviceInfo.generateRefreshToken(authentication.getName(),user.getRole());
 
                 ProfileDtoData data = mapper.readValue(user.getProfileDtoData(), ProfileDtoData.class);
                 response.setEmail(request.getEmail());
@@ -140,6 +141,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ResponseEntity<LinLoanResponse<SignupResponse>> register(SignUpRequest request) {
         try {
             User user = userRepository.findByEmail(request.getEmail()).orElse(null);
@@ -147,6 +149,7 @@ public class UserServiceImpl implements UserService {
                 LOGGER.info("<<<<<<<<  User Already Exist >>>>>>>{}", UserServiceImpl.class.getName());
                 return linLoanresponseEntity(null, "User Already Exist", HttpStatus.CONFLICT);
             }
+
           if (userRepository.existsByPhone(request.getPhone())) {
                 LOGGER.info("<<<<<<<<  Phone Number Exist >>>>>>>{}", UserServiceImpl.class.getName());
                 return linLoanresponseEntity(null, " Phone Number Exist", HttpStatus.CONFLICT);
@@ -154,11 +157,12 @@ public class UserServiceImpl implements UserService {
             /*        * New User Indicated
              */
             var newUser = new User();
-            var profileDtoData = profileDtoData(request);
             newUser.setEmail(request.getEmail());
+            newUser.setPhone(request.getPhone());
             newUser.setRole(UserType.USER);
             newUser.setStatus(UserStatus.PENDING);
             newUser.setPassword(encoder.encode(request.getPassword()));
+            var profileDtoData = profileDtoData(request,newUser.getRole());
             newUser.setProfileDtoData(mapper.writeValueAsString(profileDtoData));
 
 
@@ -176,12 +180,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private ProfileDtoData profileDtoData(SignUpRequest request){
+    private ProfileDtoData profileDtoData(SignUpRequest request,UserType userType){
         var profileDtoData = new ProfileDtoData();
         profileDtoData.setNin(request.getNin());
         profileDtoData.setFirstName(request.getFirstName());
         profileDtoData.setLastName(request.getLastName());
         profileDtoData.setPhone(request.getPhone());
+        profileDtoData.setRole(userType);
         return profileDtoData;
     }
 

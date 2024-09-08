@@ -1,7 +1,7 @@
 package com.lin.commons.exceptions.handler;
 
 import com.lin.commons.exceptions.message.GlobalMessage;
-import com.lin.commons.model.response.LinLoanResponse;
+import com.lin.commonsshared.model.response.LinLoanResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

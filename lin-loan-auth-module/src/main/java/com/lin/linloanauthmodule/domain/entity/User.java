@@ -1,8 +1,8 @@
 package com.lin.linloanauthmodule.domain.entity;
 
-import com.lin.commons.model.enums.UserStatus;
-import com.lin.commons.model.enums.UserType;
-import com.lin.commons.model.request.ProfileDtoData;
+import com.lin.commonsshared.model.enums.UserStatus;
+import com.lin.commonsshared.model.enums.UserType;
+import com.lin.commonsshared.model.request.ProfileDtoData;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

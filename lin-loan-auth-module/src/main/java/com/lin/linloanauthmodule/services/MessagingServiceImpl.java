@@ -1,7 +1,7 @@
 package com.lin.linloanauthmodule.services;
 
-import com.lin.commons.model.request.OtpData;
-import com.lin.commons.model.request.ProfileDtoData;
+import com.lin.commonsshared.model.request.OtpData;
+import com.lin.commonsshared.model.request.ProfileDtoData;
 import com.lin.linloanauthmodule.messaging.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
-import static com.lin.commons.utils.MessageUtils.OTP_TOPIC;
-import static com.lin.commons.utils.MessageUtils.PROFILE_TOPIC;
+import static com.lin.commonsshared.utils.MessageUtils.OTP_TOPIC;
+import static com.lin.commonsshared.utils.MessageUtils.PROFILE_TOPIC;
 @Service
 @RequiredArgsConstructor
 public class MessagingServiceImpl implements MessagingService {

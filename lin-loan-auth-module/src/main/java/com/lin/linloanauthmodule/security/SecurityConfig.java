@@ -1,5 +1,6 @@
 package com.lin.linloanauthmodule.security;
 
+import com.lin.commonsshared.api.ApiEndpoints;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ public class SecurityConfig {
           //  .exceptionHandling(configurer -> configurer.authenticationEntryPoint(jwtEntryPoint))
             .authorizeHttpRequests(authorize -> {
                 authorize.requestMatchers(
-                                "/auth/**",
+                                ApiEndpoints.AUTH_BASEURL+"/**",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",

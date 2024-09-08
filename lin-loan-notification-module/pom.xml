@@ -11,7 +11,7 @@
 	<groupId>com.lin</groupId>
 	<artifactId>lin-loan-notification-module</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>lin-loan-notification-module</name>
+	<name>Lin Loan notification module</name>
 	<description>lin-loan-notification-module</description>
 	<url/>
 	<licenses>
@@ -41,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.lin</groupId>
-			<artifactId>commons</artifactId>
+			<artifactId>commons-shared</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

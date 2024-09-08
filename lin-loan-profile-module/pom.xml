@@ -11,7 +11,7 @@
     <groupId>com.lin</groupId>
     <artifactId>lin-loan-profile-module</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>lin-loan-profile-module</name>
+    <name>lin loan profile module</name>
     <description>lin-loan-profile-module</description>
     <url/>
     <licenses>
@@ -34,6 +34,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lin</groupId>
+            <artifactId>commons-shared</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

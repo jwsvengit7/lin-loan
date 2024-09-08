@@ -11,6 +11,9 @@
         <option value="$PROJECT_DIR$/commons/pom.xml" />
         <option value="$PROJECT_DIR$/lin-loan-profile-module/pom.xml" />
         <option value="$PROJECT_DIR$/lin-loan-notification-module/pom.xml" />
+        <option value="$PROJECT_DIR$/loan service module/pom.xml" />
+        <option value="$PROJECT_DIR$/Lin Transaction module/pom.xml" />
+        <option value="$PROJECT_DIR$/commons shared/pom.xml" />
       </list>
     </option>
   </component>

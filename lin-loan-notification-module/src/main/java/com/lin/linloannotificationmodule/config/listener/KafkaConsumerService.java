@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-import static com.lin.commons.utils.MessageUtils.OTP_TOPIC;
+import static com.lin.commonsshared.utils.MessageUtils.OTP_TOPIC;
 
 @Service
 public class KafkaConsumerService {

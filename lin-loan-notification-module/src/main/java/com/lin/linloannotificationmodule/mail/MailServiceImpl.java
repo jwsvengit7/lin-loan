@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.lin.commons.utils.AppUtils.APP_NAME;
+import static com.lin.commonsshared.utils.AppUtils.APP_NAME;
 
 @Component
 public class MailServiceImpl implements ApplicationListener<MailEvent> {

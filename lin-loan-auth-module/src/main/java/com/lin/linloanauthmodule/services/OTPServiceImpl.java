@@ -1,6 +1,6 @@
 package com.lin.linloanauthmodule.services;
 
-import com.lin.commons.utils.Utils;
+import com.lin.commonsshared.utils.Utils;
 import com.lin.linloanauthmodule.domain.entity.User;
 import com.lin.linloanauthmodule.domain.entity.UserOTP;
 import com.lin.linloanauthmodule.domain.repository.UserOTPRepository;

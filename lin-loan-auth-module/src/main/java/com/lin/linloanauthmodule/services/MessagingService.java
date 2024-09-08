@@ -1,7 +1,7 @@
 package com.lin.linloanauthmodule.services;
 
-import com.lin.commons.model.request.OtpData;
-import com.lin.commons.model.request.ProfileDtoData;
+import com.lin.commonsshared.model.request.OtpData;
+import com.lin.commonsshared.model.request.ProfileDtoData;
 
 ;
 

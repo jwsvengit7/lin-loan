@@ -1,6 +1,6 @@
 package com.lin.linloanprofilemodule.services;
 
-import com.lin.commons.model.request.ProfileDtoData;
+import com.lin.commonsshared.model.request.ProfileDtoData;
 
 public interface ProfileService {
 

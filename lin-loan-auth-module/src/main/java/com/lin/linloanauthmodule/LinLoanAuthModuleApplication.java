@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.lin.linloanauthmodule","com.lin.commons.helpers"})
+@ComponentScan(basePackages = {"com.lin.linloanauthmodule","com.lin.commonsshared.jwt"})
 public class LinLoanAuthModuleApplication {
 
     public static void main(String[] args) {

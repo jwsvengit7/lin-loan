@@ -35,9 +35,7 @@ public class KafkaConsumerConfig {
         linLoanConfigurationProperties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
         linLoanConfigurationProperties.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class.getName());
         linLoanConfigurationProperties.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
         linLoanConfigurationProperties.put(JsonDeserializer.VALUE_DEFAULT_TYPE, KafkaProfileConsumerService.class.getName());
-
         return new DefaultKafkaConsumerFactory<>(linLoanConfigurationProperties);
     }
 

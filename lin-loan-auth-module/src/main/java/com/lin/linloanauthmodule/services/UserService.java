@@ -1,11 +1,11 @@
 package com.lin.linloanauthmodule.services;
 
-import com.lin.commons.model.request.LoginRequest;
-import com.lin.commons.model.request.SignUpRequest;
-import com.lin.commons.model.request.VerifyOtpRequest;
-import com.lin.commons.model.response.LinLoanResponse;
-import com.lin.commons.model.response.LoginResponse;
-import com.lin.commons.model.response.SignupResponse;
+import com.lin.commonsshared.model.request.LoginRequest;
+import com.lin.commonsshared.model.request.SignUpRequest;
+import com.lin.commonsshared.model.request.VerifyOtpRequest;
+import com.lin.commonsshared.model.response.LinLoanResponse;
+import com.lin.commonsshared.model.response.LoginResponse;
+import com.lin.commonsshared.model.response.SignupResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
