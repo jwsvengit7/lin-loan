@@ -32,9 +32,13 @@ public class JwtServiceInfo {
     public String extractUsernameFromToken(String token) {
         return extractClaims(token, Claims::getSubject);
     }
+
     public <T> T extractClaims(String token, Function<Claims,T> claimsTFunction){
         final Claims claims = extractAllClaims(token);
         return claimsTFunction.apply(claims);
+    }
+    public Claims extractClaimsDetails(String token){
+        return extractAllClaims(token);
     }
     public String generateToken(String authentication, UserType role) {
         final HashMap<String,Object> hashMap = new HashMap<>();
